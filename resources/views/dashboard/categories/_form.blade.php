@@ -9,14 +9,11 @@
 </div>
 @endif
 
+
 <div class="form group">
-    <lable for="">Category Name</lable>
-    <input type="text" name="name" @class([ 'form-control' , 'is-invalid'=> $errors->has('name')])
-    value="{{old('name',$categories->name)}}">
-    @error('name')
-    <div class="invalid-feedback"> {{$message}} </div>
-    @enderror
+    <x-form.input label="category Name" name="name" :value="$categories->name"/>
 </div>
+
 <div class="form group">
     <lable for="">Category Parent</lable>
     <select name="parent_id" class="form-control  form-select">
@@ -27,14 +24,11 @@
     </select>
 </div>
 <div class="form group">
-    <lable for=""> Description</lable>
-    <textarea name="description" class="form-control">
-            {{old('description',$categories->description) }}
-        </textarea>
+    <x-form.textarea  label="Description" name="description" :value="$categories->description"/>
 </div>
 <div class="form group">
-    <lable for="">Image</lable>
-    <input type="file" name="image" class="form-control" accept="image/*">
+    <x-form.label id="image">Image</x-form.label>
+    <input type="file" name="image" class="form-control" accept="image/*" />
     @if($categories->image)
     <img src="{{ asset('storage/' .$categories->image)}}" alt="" height="50">
     @endif
@@ -43,19 +37,7 @@
 <div class="form group">
     <lable for="">Status</lable>
     <div>
-        <div class="form-check">
-            <input class="form-check-input" type="radio" name="status" value="active" @checked(old('status',$categories->status)
-            =='active')>
-            <label class="form-check-label">
-                Active
-            </label>
-        </div>
-        <div class="form-check">
-            <input class="form-check-input" type="radio" name="status" value="archived" @checked(old('status',$categories->status) ==
-            'archived')>
-            <label class="form-check-label">
-                Archived
-            </label>
+       <x-form.radio name="status" :checked="$categories->status" :options="['active'=>'Active','archived'=>'Archived']"/>
         </div>
     </div>
     <div class="form group">

@@ -10,19 +10,36 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 
-class CategoriesController extends Controller {
+class CategoriesController extends Controller
+{
     /**
      * Display a listing of the resource.
      */
-    public function index() {
-        $categories = Category::all();
+    public function index(Request $request)
+    {
+        //request for searching
+        $request = request();
+        $query = Category::query();
+
+        if ($name = $request->query('name')) {
+            $query->where('name', 'LIKE', "%{$name}%");
+        }
+
+        if ($status = $request->query('status')) {
+            $query->where('status', '=', $status);
+        }
+
+        $categories = $query->paginate(5);
+
+
         return view('dashboard.categories.index', compact('categories'));
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create() {
+    public function create()
+    {
         $parents = Category::all();
         $categories = new Category();
         return view('dashboard.categories.create', compact('parents', 'categories'));
@@ -31,12 +48,13 @@ class CategoriesController extends Controller {
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request) {
+    public function store(Request $request)
+    {
 
-         $request->validate(Category::rules(),[
+        $request->validate(Category::rules(), [
             'required' => 'This field(:attribute) is required !',
             'name.unique' => 'This name is already exists !',
-         ]);
+        ]);
 
 
         $request->merge([
@@ -54,14 +72,16 @@ class CategoriesController extends Controller {
     /**
      * Display the specified resource.
      */
-    public function show(string $id) {
+    public function show(string $id)
+    {
         //
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id) {
+    public function edit(string $id)
+    {
         try {
             $categories = Category::findOrFail($id);
         } catch (Exception $e) {
@@ -82,7 +102,8 @@ class CategoriesController extends Controller {
     /**
      * Update the specified resource in storage.
      */
-    public function update(CategotyRequest $request,$id) {
+    public function update(CategotyRequest $request, $id)
+    {
 
 
         $category = Category::findOrFail($id);
@@ -94,7 +115,7 @@ class CategoriesController extends Controller {
 
         $category->update($request->all($data));
 
-        if($old_image && $data['image']) {
+        if ($old_image && $data['image']) {
             Storage::disk('uploads')->delete($old_image);
         }
 
@@ -105,13 +126,14 @@ class CategoriesController extends Controller {
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id) {
+    public function destroy($id)
+    {
 
         $category = Category::findOrFail($id);
 
         $category->delete();
 
-        if($category->image) {
+        if ($category->image) {
             Storage::disk('public')->delete($category->image);
         }
 
@@ -124,9 +146,10 @@ class CategoriesController extends Controller {
     }
 
 
-    protected function uploadImage(Request $request) {
+    protected function uploadImage(Request $request)
+    {
 
-        if(!$request->hasFile('image')) {
+        if (!$request->hasFile('image')) {
             return;
         }
         $file = $request->file('image');

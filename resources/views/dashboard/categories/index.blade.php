@@ -12,20 +12,19 @@
 <div class="mb-5">
     <a href="{{route('categories.create')}}" class="btn btn-sm btn-outline-primary"> Add Category </a>
 </div>
+<!-- Alert Component-->
+<x-alert/>
 
-@if(session()->has('success'))
-<div class="alert alert-success">
-    {{ session('success') }}
-</div>
 
-@endif
-
-@if(session()->has('info'))
-<div class="alert alert-info">
-    {{ session('info') }}
-</div>
-
-@endif
+<form action="{{URL::current()}}" method="get" class="d-flex justify-content-between mb-4"  >
+    <x-form.input name="name" placeholder="Name" label="" class="mx-2" :value="request('name')"/>
+    <select name="status" class="form-control" class="mx-2">
+        <option>All</option>
+        <option value="active" @selected(request('ststus') == 'active')>Active</option>
+        <option value="archived" @selected(request('ststus') == 'archived')>Archived</option>
+    </select>
+    <button class="btn btn-dark" class="mx-2"> Filter </button>
+</form>
 
 <table class="table">
     <thead>
@@ -34,9 +33,11 @@
             <th>Id</th>
             <th>Name</th>
             <th>Description</th>
+            <th>Status</th>
             <th>Parent</th>
             <th>Created At</th>
             <th colspan="2">Operations</th>
+
         </tr>
     </thead>
     <tbody>
@@ -47,6 +48,7 @@
             <td>{{$category->id}}</td>
             <td>{{$category->name}}</td>
             <td>{{$category->description}}</td>
+            <td>{{$category->status}}</td>
             <td>{{$category->parent_id}}</td>
             <td>{{$category->created_at}}</td>
             <td>
@@ -70,5 +72,5 @@
     </tbody>
 </table>
 
-
+{{$categories->withQueryString()->links()}}
 @endsection
