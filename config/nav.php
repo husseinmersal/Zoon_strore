@@ -14,9 +14,15 @@ return[
     'route' => 'categories.index',
     'title' => 'Categories',
     'active' => 'categories.*',
-    'badge' => 'New'
+    'badge' => 'Stable'
   ],
 
-  
+  [
+    'icon' => 'far fa-circle nav-icon',
+    'route' => 'products.index',
+    'title' => 'Products',
+    'active' => 'products.*',
+    'badge' => 'New'
+  ],
   
 ];

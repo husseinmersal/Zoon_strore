@@ -1,17 +1,16 @@
 @extends('layouts.dashboard')
 
-@section('title','Categories')
+@section('title','Products')
 
 @section('breadcrumb')
 @parent
-<li class="breadcrumb-item active">Categories</li>
+<li class="breadcrumb-item active">Products</li>
 @endsection
 
 @section('content')
 
 <div class="mb-5">
-    <a href="{{route('categories.create')}}" class="btn btn-sm btn-outline-primary mr-2"> Add Category </a>
-    <a href="{{route('categories.trash')}}" class="btn btn-sm btn-outline-dark"> Trash </a>
+    <a href="{{route('products.create')}}" class="btn btn-sm btn-outline-primary mr-2"> Add Product </a>
 
 </div>
 <!-- Alert Component-->
@@ -31,10 +30,9 @@
 <table class="table">
     <thead>
         <tr>
-            <th>Image</th>
             <th>Name</th>
-            <th>Parent</th>
-            <th>Description</th>
+            <th>Category</th>
+            <th>Store</th>
             <th>Status</th>
             <th>Created At</th>
             <th colspan="2">Operations</th>
@@ -42,20 +40,19 @@
         </tr>
     </thead>
     <tbody>
-        @if($categories->count())
-        @foreach($categories as $category)
+        @if($products->count())
+        @foreach($products as $product)
         <tr>
-            <td><img src="{{ asset('storage/' .$category->image)}}" alt="" height="50"></td>
-            <td>{{$category->name}}</td>
-            <td>{{$category->parent_name}}</td>
-            <td>{{$category->description}}</td>
-            <td>{{$category->status}}</td>
-            <td>{{$category->created_at}}</td>
+            <td>{{$product->name}}</td>
+            <td>{{$product->category_id}}</td>
+            <td>{{$product->store_id}}</td>
+            <td>{{$product->status}}</td>
+            <td>{{$product->created_at}}</td>
             <td>
-                <a href="{{route('categories.edit',[$category->id])}}" class="btn btn-sm btn-outline-success">Edit</a>
+                <a href="{{route('products.edit',[$product->id])}}" class="btn btn-sm btn-outline-success">Edit</a>
             </td>
             <td>
-                <form action="{{route('categories.destroy',[$category->id])}}" method="post">
+                <form action="{{route('products.destroy',[$product->id])}}" method="post">
                     @csrf
                     <input type="hidden" name="_method" value="delete">
                     @method('delete')
@@ -72,5 +69,5 @@
     </tbody>
 </table>
 
-{{$categories->withQueryString()->links()}}
+{{$products->withQueryString()->links()}}
 @endsection

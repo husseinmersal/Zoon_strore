@@ -18,6 +18,13 @@ class UserSeeder extends Seeder
             'email' => 'mersal@gmail.com',
             'password' => Hash::make('123456'),         
             'phone_number' => '01127797917',
-       ]);
+       ],);
+       User::create([
+        'name' => 'Ahmed Mersal',
+        'email' => 'ahmed@gmail.com',
+        'password' => Hash::make('123456'),         
+        'phone_number' => '01117797917',
+   ],);
+
     }
 }
