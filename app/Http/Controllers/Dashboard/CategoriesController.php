@@ -17,19 +17,21 @@ class CategoriesController extends Controller
      */
     public function index(Request $request)
     {
-        //request for searching
+        
         $request = request();
-        $query = Category::query();
 
-        if ($name = $request->query('name')) {
-            $query->where('name', 'LIKE', "%{$name}%");
-        }
+        //SELECT a.* , parents.name as parent_name 
+        //FROM categories as a
+        //LEFT JOIN categories as parents ON parents.id = a.parent_id
 
-        if ($status = $request->query('status')) {
-            $query->where('status', '=', $status);
-        }
-
-        $categories = $query->paginate(5);
+        $categories = Category::leftJoin('categories as parents' ,'parents.id','=','categories.parent_id')
+        ->select([
+            'categories.*',
+            'parents.name as parent_name'
+        ]) 
+        ->filter($request->query())
+        ->orderBy('categories.name')
+        ->paginate(5);
 
 
         return view('dashboard.categories.index', compact('categories'));

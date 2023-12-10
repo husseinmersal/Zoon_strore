@@ -30,11 +30,10 @@
     <thead>
         <tr>
             <th>Image</th>
-            <th>Id</th>
             <th>Name</th>
+            <th>Parent</th>
             <th>Description</th>
             <th>Status</th>
-            <th>Parent</th>
             <th>Created At</th>
             <th colspan="2">Operations</th>
 
@@ -45,11 +44,10 @@
         @foreach($categories as $category)
         <tr>
             <td><img src="{{ asset('storage/' .$category->image)}}" alt="" height="50"></td>
-            <td>{{$category->id}}</td>
             <td>{{$category->name}}</td>
+            <td>{{$category->parent_name}}</td>
             <td>{{$category->description}}</td>
             <td>{{$category->status}}</td>
-            <td>{{$category->parent_id}}</td>
             <td>{{$category->created_at}}</td>
             <td>
                 <a href="{{route('categories.edit',[$category->id])}}" class="btn btn-sm btn-outline-success">Edit</a>
