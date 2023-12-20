@@ -34,6 +34,7 @@
             <th>Image</th>
             <th>Name</th>
             <th>Parent</th>
+            <th>Products Number</th>
             <th>Description</th>
             <th>Status</th>
             <th>Created At</th>
@@ -46,8 +47,9 @@
         @foreach($categories as $category)
         <tr>
             <td><img src="{{ asset('storage/' .$category->image)}}" alt="" height="50"></td>
-            <td>{{$category->name}}</td>
-            <td>{{$category->parent_name}}</td>
+            <td><a href="{{route('categories.show',$category->id)}} ">{{$category->name}}</td>
+            <td>{{$category->parent->name}}</td>
+            <th>{{$category->products_number}}</th>
             <td>{{$category->description}}</td>
             <td>{{$category->status}}</td>
             <td>{{$category->created_at}}</td>
