@@ -45,23 +45,23 @@ class CartController extends Controller
     }
 
 
-    public function update($id, $quantity)
+    public function update(Request $request,  $id)
     {
         $request->validate([
-            "product_id" => ['required', 'int', 'exists:products,id'],
-            'quantity' => ['nullable', 'int', 'min:1']
+            'quantity' => ['required', 'int', 'min:1']
         ]);
 
-        $product = Product::findOrFail($request->post('product_id'));
-
-        $this->cart->update($product, $request->post('quantity'));
+        $this->cart->update($id, $request->post('quantity'));
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy($id)
     {
         $this->cart->delete($id);
+        return [
+            'message' => 'Item deleted',
+        ];
     }
 }
