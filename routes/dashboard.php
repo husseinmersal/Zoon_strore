@@ -8,7 +8,8 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::group([
-        'middleware' => ['auth','auth.type:admin,super-admin'],
+        'middleware' => ['auth:admin'],
+        'prefix' => 'admin'
 ], function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])
                 ->name('dashboard');

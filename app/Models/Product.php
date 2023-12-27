@@ -14,6 +14,17 @@ class Product extends Model
     protected $fillable = ['name', 'slug', 'description', 'image', 'category_id',
         'store_id', 'price', 'compare_price', 'status'];
 
+        protected $hidden = [
+            'image',
+            'created_at',
+            'updated_at',
+            'deleted_at',  
+        ];
+
+        protected $appends =[
+            'image_url'
+        ];
+
 
     // Product belognsTo Category relationship 
     public function category()
@@ -50,6 +61,10 @@ class Product extends Model
     protected static function booted()
     {
         static::addGlobalScope('store', new StoreScope());
+
+        static::creating(function(Product $product){
+          $product->slug = Str::slug($product->name);
+        });
     }
 
 
@@ -71,8 +86,40 @@ class Product extends Model
     {
         if (!$this->compare_price) {
             return 0;
-        }else{
+        } else {
             return intval(100 - (100 * $this->price / $this->compare_price));
         }
+    }
+
+
+ // scope filter to list products
+    public function scopeFilter(Builder $builder, $filters)
+    {
+        $options = array_merge([
+            'store_id' => null,
+            'category_id' => null,
+            'tag_id' => null,
+            'status' => 'active'
+        ], $filters);
+
+        $builder->when($options['store_id'], function ($builder, $value) {
+            $builder->where('store_id', $value);
+        });
+        $builder->when($options['category_id'], function ($builder, $value) {
+            $builder->where('category_id', $value);
+        });
+        $builder->when($options['tag_id'], function ($builder, $value) {
+            $builder->whereExixts(function ($query) use ($value) {
+                $query->select(1)
+                    ->from('product_tag')
+                    ->where('product_id = products.id')
+                    ->where('tag_id', $value);
+            });
+        });
+
+
+        $builder->when($options['status'], function ($query, $status){
+             return $query->where('status',$status);
+        });
     }
 }
