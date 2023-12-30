@@ -3,19 +3,26 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\ProductResource;
 use Illuminate\Http\Request;
 use App\Models\Product;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Response;
 class ProductsController extends Controller
 {
+    public function __construct(){
+        $this->middleware('auth:sanctum')->except('index','show');
+    }
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
-        return Product::filter($request->query())
+        $products = Product::filter($request->query())
         ->with('category:id,name','store:id,name','tags:id,name') 
         ->paginate();
+
+       return ProductResource::collection($products);
 
     }
 
@@ -33,6 +40,13 @@ class ProductsController extends Controller
             'compare_price' => 'nullable|numberic|gt:price'
         ]);
 
+        $user = $request->user();
+
+        if(!$user->tokenCan('products.create')){
+            abort(403,'Not Allowed');
+        }
+
+
          $product = Product::create($request->all());
          return Response::json($product, 201 , [
             'location' => route('products.show', $product->id),
@@ -42,10 +56,12 @@ class ProductsController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($id)
+    public function show(Product $product)
     {
-        return Product::with('category:id,name','store:id,name','tags:id,name')
-        ->findOrFail($id);
+
+        return new ProductResource($product);
+     //   return Product::with('category:id,name','store:id,name','tags:id,name')
+      //  ->findOrFail($id);
     }
 
     /**
@@ -62,6 +78,13 @@ class ProductsController extends Controller
             'compare_price' => 'nullable|numeric|gt:price',
         ]);
 
+        $user = $request->user();
+
+        if(!$user->tokenCan('products.update')){
+            abort(403,'Not Allowed');
+        }
+
+
         $product->update($request->all());
 
 
@@ -74,6 +97,14 @@ class ProductsController extends Controller
      */
     public function destroy(string $id)
     {
+        $user = Auth::guard('sanctum')->user();
+
+        if(!$user->tokenCan('products.delete')){
+            return response([
+             'message' => 'Now Allowed'
+            ],403);
+        }
+
         Product::destroy($id);
         return response()->json([
             'message' => 'Product Deleted Successfully',
